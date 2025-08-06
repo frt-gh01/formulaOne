@@ -1,11 +1,10 @@
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import units.Distance
 import units.Distance.Companion.Kilometer
 import units.Distance.Companion.Millimeter
-import units.Quantity
+import units.Time.Companion.Hour
+import units.div
 
 import units.times
 import kotlin.test.assertEquals
@@ -73,6 +72,24 @@ class FormulaOneTest {
         }
 
         assertEquals(Sector.turboNoCarAheadErrorDescription(), exception.message)
+    }
+
+    @Test
+    @DisplayName("A car can activate turbo when 1 second behind another car")
+    fun testACarCanActivateTurboWhenOneSecondBehindAnotherCar() {
+        val sector = Sector.turboSectorOf(24 * Kilometer)
+        val schumacher = schumacherCar()
+        val hamilton = hamiltonCar()
+
+        schumacher.speed(300 * (Kilometer / Hour))
+        sector.placeAt(schumacher, 12.95 * Kilometer)
+
+        hamilton.speed(300 * (Kilometer / Hour))
+        sector.placeAt(hamilton, 13 * Kilometer)
+
+        schumacher.activateTurbo()
+
+        assert(schumacher.isTurboActivated())
     }
 
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
