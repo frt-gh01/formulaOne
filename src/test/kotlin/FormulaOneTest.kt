@@ -58,6 +58,23 @@ class FormulaOneTest {
         assertFalse { car.isTurboActivated() }
     }
 
+    @Test
+    @DisplayName("A car cannot activate turbo when no car ahead")
+    fun testACarCanNotActivateTurboWhenNoCarAhead() {
+        val sector = Sector.turboSectorOf(10 * Kilometer)
+        val schumacher = schumacherCar()
+        val hamilton = hamiltonCar()
+
+        sector.placeAt(schumacher, 2 * Kilometer)
+        sector.placeAt(hamilton, 4 * Kilometer)
+
+        val exception = assertThrows(java.lang.IllegalStateException::class.java) {
+            hamilton.activateTurbo()
+        }
+
+        assertEquals(Sector.turboNoCarAheadErrorDescription(), exception.message)
+    }
+
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
     fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)
 }

@@ -22,9 +22,10 @@ abstract class Sector(val length: Quantity<Distance>) {
         fun invalidLengthErrorDescription(): String = "Invalid Sector's length. It should be positive"
         fun carCannotBePlacedOutsideErrorDescription(): String = "Cannot place the car outside the sector"
         fun turboNotAllowedErrorDescription(): String = "Turbo is not allowed in this sector"
+        fun turboNoCarAheadErrorDescription(): String = "Turbo cannot be activated because no car ahead"
     }
 
-    private val cars: MutableMap<FormulaOneCar, Quantity<Distance>> = mutableMapOf<FormulaOneCar, Quantity<Distance>>()
+    protected val cars: MutableMap<FormulaOneCar, Quantity<Distance>> = mutableMapOf<FormulaOneCar, Quantity<Distance>>()
 
     fun placeAt(car: FormulaOneCar, position: Quantity<Distance>) {
         check(position <= this.length) { carCannotBePlacedOutsideErrorDescription() }
@@ -38,7 +39,19 @@ abstract class Sector(val length: Quantity<Distance>) {
 
 class TurboSector(distance: Quantity<Distance>): Sector(distance) {
     override fun carActivatingTurbo(car: FormulaOneCar) {
+        val frontCar =  carAheadIfNone(car) { throw IllegalStateException(turboNoCarAheadErrorDescription()) }
         car.activateTurboInTurboSector()
+    }
+
+    private fun carAheadIfNone(car: FormulaOneCar, ifNoneBlock: () -> Unit) {
+        val carPosition = this.cars.getValue(car)
+        val positionOfCarInFront = this.cars.values
+            .sorted()
+            .firstOrNull { position -> position > carPosition }
+
+        if (positionOfCarInFront == null) {
+            ifNoneBlock()
+        }
     }
 }
 
