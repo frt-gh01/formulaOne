@@ -9,41 +9,55 @@ import units.Quantity
 
 import units.times
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class FormulaOneTest {
-    @Nested
-    @DisplayName("Sector")
-    inner class SectorTests {
-        @Test
-        @DisplayName("Sector's length must be positive")
-        fun testSectorLengthMustBePositive() {
-            var exception = assertThrows(Error::class.java) {
-                Sector.turboSectorOf(0 * Kilometer)
-            }
-
-            assertEquals(Sector.invalidLengthErrorDescription(), exception.message)
-
-            exception = assertThrows(Error::class.java) {
-                Sector.turboSectorOf((-1) * Kilometer)
-            }
-
-            assertEquals(Sector.invalidLengthErrorDescription(), exception.message)
+    @Test
+    @DisplayName("Sector's length must be positive")
+    fun testSectorLengthMustBePositive() {
+        var exception = assertThrows(IllegalArgumentException::class.java) {
+            Sector.turboSectorOf(0 * Kilometer)
         }
 
-        @Test
-        @DisplayName("A car cannot be placed in a kilometer greater than the sector's length")
-        fun testACarCanNotBePlacedInAKilometerGreaterThanSectorLength() {
-            val sector = Sector.turboSectorOf(10 * Kilometer)
-            val outside = sector.length + 1 * Millimeter
-            val car = schumacherCar()
+        assertEquals(Sector.invalidLengthErrorDescription(), exception.message)
 
-            val exception = assertThrows(Error::class.java) {
-                sector.placeAt(car, outside)
-            }
-
-            assertEquals(Sector.carCannotBePlacedOutsideErrorDescription(), exception.message)
+        exception = assertThrows(IllegalArgumentException::class.java) {
+            Sector.turboSectorOf((-1) * Kilometer)
         }
+
+        assertEquals(Sector.invalidLengthErrorDescription(), exception.message)
+    }
+
+    @Test
+    @DisplayName("A car cannot be placed in a kilometer greater than the sector's length")
+    fun testACarCanNotBePlacedInAKilometerGreaterThanSectorLength() {
+        val sector = Sector.turboSectorOf(10 * Kilometer)
+        val outside = sector.length + 1 * Millimeter
+        val car = schumacherCar()
+
+        val exception = assertThrows(IllegalStateException::class.java) {
+            sector.placeAt(car, outside)
+        }
+
+        assertEquals(Sector.carCannotBePlacedOutsideErrorDescription(), exception.message)
+    }
+
+    @Test
+    @DisplayName("A car cannot activate turbo in non turbo sector")
+    fun testACarCanNotActivateTurboInNonTurboSector() {
+        val sector = Sector.noTurboSectorOf(10 * Kilometer)
+        val car = schumacherCar()
+
+        sector.placeAt(car, 2 * Kilometer)
+
+        val exception = assertThrows(java.lang.IllegalStateException::class.java) {
+            car.activateTurbo()
+        }
+
+        assertEquals(Sector.turboNotAllowedErrorDescription(), exception.message)
+        assertFalse { car.isTurboActivated() }
     }
 
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
+    fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)
 }
