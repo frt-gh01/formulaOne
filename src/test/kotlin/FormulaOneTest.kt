@@ -124,6 +124,18 @@ class FormulaOneTest {
         assertEquals(Track.noSectorsErrorDescription(), exception.message)
     }
 
+    @Test
+    @DisplayName("The length of the track is the sum of its sectors")
+    fun testTrackLengthShouldBeSumOfItsSectors() {
+        val track = Track.with(listOf<Sector>(
+            Sector.turboSectorOf(10 * Kilometer),
+            Sector.noTurboSectorOf(2 * Kilometer),
+            Sector.turboSectorOf(30 * Kilometer)
+        ))
+
+        assertEquals(42 * Kilometer, track.length())
+    }
+
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
     fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)
 }
