@@ -139,11 +139,10 @@ class FormulaOneTest {
     @Test
     @DisplayName("A car cannot be placed in a kilometer greater than the track's length")
     fun testACarCanNotBePlacedInAKilometerGreaterThanTrackLength() {
-        val track = Track.with(listOf<Sector>(
-            Sector.turboSectorOf(10 * Kilometer),
-            Sector.noTurboSectorOf(2 * Kilometer),
-            Sector.turboSectorOf(30 * Kilometer)
-        ))
+        val sector1 = Sector.turboSectorOf(10 * Kilometer)
+        val sector2 = Sector.noTurboSectorOf(2 * Kilometer)
+        val sector3 = Sector.noTurboSectorOf(30 * Kilometer)
+        val track = Track.with(listOf<Sector>(sector1, sector2, sector3))
 
         val outside = track.length() + 1 * Millimeter
         val car = schumacherCar()
@@ -155,6 +154,26 @@ class FormulaOneTest {
         assertEquals(Track.carCannotBePlacedOutsideErrorDescription(), exception.message)
     }
 
+    @Test
+    @DisplayName("A car should be placed in track's sector")
+    fun testACarShouldBePlacedInTrackSector() {
+        val sector1 = Sector.turboSectorOf(10 * Kilometer)
+        val sector2 = Sector.noTurboSectorOf(2 * Kilometer)
+        val sector3 = Sector.noTurboSectorOf(30 * Kilometer)
+        val track = Track.with(listOf<Sector>(sector1, sector2, sector3))
+
+        val car = schumacherCar()
+
+        val carPosition = (sector1.length + sector2.length) * 2
+        track.placeAt(car, carPosition)
+
+        assertEquals(sector3, track.sectorOf(car))
+        assertEquals(carPosition, track.positionOf(car))
+
+        assertFalse(sector1.contains(car))
+        assertFalse(sector2.contains(car))
+        assert(sector3.contains(car))
+    }
 
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
     fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)

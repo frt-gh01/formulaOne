@@ -2,13 +2,7 @@ import units.Distance
 import units.Distance.Companion.Kilometer
 import units.Distance.Companion.Meter
 import units.Quantity
-import units.QuotientUnit
-import units.Time
-import units.Time.Companion.Hour
-import units.Time.Companion.Second
 import units.times
-import java.util.concurrent.TimeUnit
-import kotlin.math.abs
 
 abstract class Sector(val length: Quantity<Distance>) {
     companion object {
@@ -41,6 +35,9 @@ abstract class Sector(val length: Quantity<Distance>) {
         this.cars[car] = position
         car.atSector(this)
     }
+
+    fun contains(car: FormulaOneCar) = this.cars.containsKey(car)
+    fun positionOf(car: FormulaOneCar) = this.cars.getValue(car)
 
     abstract fun carActivatingTurbo(car: FormulaOneCar)
 }
