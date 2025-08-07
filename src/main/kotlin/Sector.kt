@@ -38,6 +38,7 @@ abstract class Sector(val length: Quantity<Distance>) {
 
     fun contains(car: FormulaOneCar) = this.cars.containsKey(car)
     fun positionOf(car: FormulaOneCar) = this.cars.getValue(car)
+    fun remove(car: FormulaOneCar) = this.cars.remove(car)
 
     abstract fun carActivatingTurbo(car: FormulaOneCar)
 }

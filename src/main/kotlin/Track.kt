@@ -21,8 +21,9 @@ class Track(val sectors: List<Sector>) {
     fun placeAt(car: FormulaOneCar, position: Quantity<Distance>) {
         check(position <= this.length()) { carCannotBePlacedOutsideErrorDescription() }
 
-        var acc = 0 * Kilometer
+        this.remove(car)
 
+        var acc = 0 * Kilometer
         this.sectors.forEach {
             // Kotlin's blocks are full closure!
             if (position <= acc + it.length) return it.placeAt(car, position - acc)
@@ -53,14 +54,15 @@ class Track(val sectors: List<Sector>) {
 
     fun contains(car: FormulaOneCar): Boolean = this.sectors.any { it.contains(car) }
 
-    private fun sectorOfIfNone(car: FormulaOneCar, ifNoneBlock: () -> Unit): Sector {
+    private inline fun sectorOfIfNone(car: FormulaOneCar, ifNoneBlock: () -> Unit): Sector {
         val sector = this.sectors.firstOrNull { it.contains(car) }
-
-        if (sector == null) {
-            ifNoneBlock()
-        }
+        if (sector == null) ifNoneBlock()
 
         return sector!!
     }
 
+    private fun remove(car: FormulaOneCar) {
+        val sector = this.sectorOfIfNone(car) { return }
+        sector.remove(car)
+    }
 }

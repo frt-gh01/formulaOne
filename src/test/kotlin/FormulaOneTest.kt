@@ -201,6 +201,25 @@ class FormulaOneTest {
         assert(sector3.contains(verstappen))
     }
 
+    @Test
+    @DisplayName("Car in Track cannot be in more than one sector")
+    fun testCarCannotBeInMoreThanASectorInTrack() {
+        val sector1 = Sector.turboSectorOf(10 * Kilometer)
+        val sector2 = Sector.noTurboSectorOf(2 * Kilometer)
+        val sector3 = Sector.noTurboSectorOf(30 * Kilometer)
+        val track = Track.with(listOf<Sector>(sector1, sector2, sector3))
+
+        val schumacher = schumacherCar()
+        track.placeAt(schumacher, 1 * Kilometer)
+        track.placeAt(schumacher, track.length() - 1 * Kilometer)
+
+        assertEquals(sector3, track.sectorOf(schumacher))
+
+        assertFalse(sector1.contains(schumacher))
+        assertFalse(sector2.contains(schumacher))
+        assert(sector3.contains(schumacher))
+    }
+
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
     fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)
     fun verstappenCar(): FormulaOneCar = FormulaOneCar.drivenBy(Verstappen)
