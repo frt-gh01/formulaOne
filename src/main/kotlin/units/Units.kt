@@ -9,6 +9,8 @@
 package units
 
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
+
 
 abstract class Unit(val suffix: String, val ratio: Double) {
     internal fun convertToBaseUnit(amount: Double) = amount * ratio
@@ -94,6 +96,8 @@ class Quantity<T: Unit>(val amount: Double, val unit: T): Comparable<Quantity<T>
      * Divide this by a scalar, used for things like "halve the speed"
      */
     operator fun div(other: Number) = Quantity(amount / other.toDouble(), unit)
+
+    fun abs(): Quantity<T> = Quantity(abs(amount), unit)
 
     /**
      * Compare this value with another quantity - which must have the same type

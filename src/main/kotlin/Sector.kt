@@ -1,7 +1,14 @@
 import units.Distance
 import units.Distance.Companion.Kilometer
+import units.Distance.Companion.Meter
 import units.Quantity
+import units.QuotientUnit
+import units.Time
+import units.Time.Companion.Hour
+import units.Time.Companion.Second
 import units.times
+import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 abstract class Sector(val length: Quantity<Distance>) {
     companion object {
@@ -23,6 +30,7 @@ abstract class Sector(val length: Quantity<Distance>) {
         fun carCannotBePlacedOutsideErrorDescription(): String = "Cannot place the car outside the sector"
         fun turboNotAllowedErrorDescription(): String = "Turbo is not allowed in this sector"
         fun turboNoCarAheadErrorDescription(): String = "Turbo cannot be activated because no car ahead"
+        fun turboCarAheadFarAwayErrorDescription(): String = "Turbo cannot be activated because opponent car is far ahead"
     }
 
     protected val cars: MutableMap<FormulaOneCar, Quantity<Distance>> = mutableMapOf<FormulaOneCar, Quantity<Distance>>()
@@ -39,19 +47,30 @@ abstract class Sector(val length: Quantity<Distance>) {
 
 class TurboSector(distance: Quantity<Distance>): Sector(distance) {
     override fun carActivatingTurbo(car: FormulaOneCar) {
-        val frontCar =  carAheadIfNone(car) { throw IllegalStateException(turboNoCarAheadErrorDescription()) }
+        val frontCar = carAheadIfNone(car) { throw IllegalStateException(turboNoCarAheadErrorDescription()) }
+        if (distanceBetween(car, frontCar) > 50 * Meter) { throw IllegalStateException(turboCarAheadFarAwayErrorDescription()) }
+
         car.activateTurboInTurboSector()
     }
 
-    private fun carAheadIfNone(car: FormulaOneCar, ifNoneBlock: () -> Unit) {
+    private fun carAheadIfNone(car: FormulaOneCar, ifNoneBlock: () -> Unit): FormulaOneCar {
         val carPosition = this.cars.getValue(car)
-        val positionOfCarInFront = this.cars.values
-            .sorted()
-            .firstOrNull { position -> position > carPosition }
+        val carWithPosition: Pair<FormulaOneCar, Quantity<Distance>>? = this.cars.toList()
+            .sortedBy { it.second }
+            .firstOrNull { it.second > carPosition }
 
-        if (positionOfCarInFront == null) {
+        if (carWithPosition == null) {
             ifNoneBlock()
         }
+
+        return carWithPosition!!.first
+    }
+
+    private fun distanceBetween(car: FormulaOneCar, otherCar: FormulaOneCar): Quantity<Distance> {
+        val carPosition = this.cars.getValue(car)
+        val otherCarPosition = this.cars.getValue(otherCar)
+
+        return (carPosition - otherCarPosition).abs()
     }
 }
 

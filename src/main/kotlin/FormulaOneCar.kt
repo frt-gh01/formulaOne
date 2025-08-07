@@ -24,6 +24,10 @@ class FormulaOneCar(val driver: Driver) {
         this.speed = speed
     }
 
+    fun speed(): Speed {
+        return this.speed
+    }
+
     fun activateTurbo() {
         this.turboStatus.activateTurbo()
     }
@@ -45,4 +49,5 @@ class FormulaOneCar(val driver: Driver) {
     fun isTurboActivated(): Boolean = this.turboStatus.isActivated()
 }
 
-typealias Speed = Quantity<QuotientUnit<Distance, Time>>
+typealias SpeedUnit = QuotientUnit<Distance, Time>
+typealias Speed = Quantity<SpeedUnit>

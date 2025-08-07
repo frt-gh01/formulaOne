@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import units.Distance.Companion.Kilometer
+import units.Distance.Companion.Meter
 import units.Distance.Companion.Millimeter
 import units.Time.Companion.Hour
 import units.div
@@ -75,21 +76,42 @@ class FormulaOneTest {
     }
 
     @Test
-    @DisplayName("A car can activate turbo when 1 second behind another car")
+    @DisplayName("A car can activate turbo when 50 meters behind another car")
     fun testACarCanActivateTurboWhenOneSecondBehindAnotherCar() {
-        val sector = Sector.turboSectorOf(24 * Kilometer)
+        val sector = Sector.turboSectorOf(10 * Kilometer)
         val schumacher = schumacherCar()
         val hamilton = hamiltonCar()
 
         schumacher.speed(300 * (Kilometer / Hour))
-        sector.placeAt(schumacher, 12.95 * Kilometer)
+        sector.placeAt(schumacher, 2 * Kilometer)
 
         hamilton.speed(300 * (Kilometer / Hour))
-        sector.placeAt(hamilton, 13 * Kilometer)
+        sector.placeAt(hamilton, 2 * Kilometer + 50 * Meter)
 
         schumacher.activateTurbo()
 
         assert(schumacher.isTurboActivated())
+    }
+
+    @Test
+    @DisplayName("A car cannot activate turbo when more than 50 meters behind another car")
+    fun testACarCanActivateTurboWhenMoreThanOneSecondBehindAnotherCar() {
+        val sector = Sector.turboSectorOf(10 * Kilometer)
+        val schumacher = schumacherCar()
+        val hamilton = hamiltonCar()
+
+        schumacher.speed(300 * (Kilometer / Hour))
+        sector.placeAt(schumacher, 2 * Kilometer)
+
+        hamilton.speed(300 * (Kilometer / Hour))
+        sector.placeAt(hamilton, 2 * Kilometer + 50 * Meter + 1 * Millimeter)
+
+        val exception = assertThrows(java.lang.IllegalStateException::class.java) {
+            schumacher.activateTurbo()
+        }
+
+        assertEquals(Sector.turboCarAheadFarAwayErrorDescription(), exception.message)
+        assertFalse { schumacher.isTurboActivated() }
     }
 
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
