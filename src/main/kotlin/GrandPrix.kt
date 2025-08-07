@@ -4,4 +4,6 @@ class GrandPrix(val track: Track, val lapsCount: Int, val cars: List<FormulaOneC
     }
 
     fun length() = this.track.length() * this.lapsCount
+
+    fun locationOf(car: FormulaOneCar) = car.traveledDistance()
 }

@@ -41,11 +41,11 @@ class Track(val sectors: List<Sector>) {
         return sectorOfIfNone(car) { throw IllegalStateException(carNotFoundErrorDescription()) }
     }
 
-    fun positionOf(car: FormulaOneCar): Quantity<Distance> {
+    fun locationOf(car: FormulaOneCar): Quantity<Distance> {
         var acc = 0 * Kilometer
 
         this.sectors.forEach {
-            if (it.contains(car)) return acc + it.positionOf(car)
+            if (it.contains(car)) return acc + it.locationOf(car)
             acc += it.length
         }
 
