@@ -5,6 +5,7 @@ import units.Distance.Companion.Kilometer
 import units.Distance.Companion.Meter
 import units.Distance.Companion.Millimeter
 import units.Time.Companion.Hour
+import units.Time.Companion.Minute
 import units.div
 
 import units.times
@@ -278,6 +279,30 @@ class FormulaOneTest {
 
         assertEquals(0 * Kilometer, grandPrix.locationOf(schumacher))
         assertEquals(0 * Kilometer, grandPrix.locationOf(hamilton))
+    }
+
+    @Test
+    @DisplayName("A stopped car should not move when time pass")
+    fun testAStoppedCarShouldNotMoveWhenTimePass() {
+        val sector1 = Sector.turboSectorOf(10 * Kilometer)
+        val sector2 = Sector.noTurboSectorOf(2 * Kilometer)
+        val sector3 = Sector.noTurboSectorOf(30 * Kilometer)
+        val track = Track.with(listOf<Sector>(sector1, sector2, sector3))
+
+        val lapsCount = 100
+
+        val schumacher = schumacherCar()
+        schumacher.speed(0 * (Kilometer / Hour))
+
+        val grandPrix = GrandPrix.start(
+            track = track,
+            lapsCount = lapsCount,
+            cars = listOf<FormulaOneCar>(schumacher)
+        )
+
+        grandPrix.advanceTime(10 * Minute)
+
+        assertEquals(0 * Kilometer, grandPrix.locationOf(schumacher))
     }
 
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
