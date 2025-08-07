@@ -114,6 +114,16 @@ class FormulaOneTest {
         assertFalse { schumacher.isTurboActivated() }
     }
 
+    @Test
+    @DisplayName("A track must have sectors")
+    fun testATrackMustHaveSectors() {
+        val exception = assertThrows(java.lang.IllegalArgumentException::class.java) {
+            Track.with(listOf<Sector>())
+        }
+
+        assertEquals(Track.noSectorsErrorDescription(), exception.message)
+    }
+
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
     fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)
 }
