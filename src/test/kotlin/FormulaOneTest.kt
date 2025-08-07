@@ -220,6 +220,24 @@ class FormulaOneTest {
         assert(sector3.contains(schumacher))
     }
 
+    @Test
+    @DisplayName("Two cars can be at the same position")
+    fun testTwoCarsCanBeAtTheSamePosition() {
+        val sector1 = Sector.turboSectorOf(10 * Kilometer)
+        val sector2 = Sector.noTurboSectorOf(2 * Kilometer)
+        val sector3 = Sector.noTurboSectorOf(30 * Kilometer)
+        val track = Track.with(listOf<Sector>(sector1, sector2, sector3))
+
+        val schumacher = schumacherCar()
+        track.placeAt(schumacher, 24 * Kilometer)
+
+        val hamilton = hamiltonCar()
+        track.placeAt(hamilton, 24 * Kilometer)
+
+        assertEquals(24 * Kilometer, track.positionOf(schumacher))
+        assertEquals(24 * Kilometer, track.positionOf(hamilton))
+    }
+
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
     fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)
     fun verstappenCar(): FormulaOneCar = FormulaOneCar.drivenBy(Verstappen)
