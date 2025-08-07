@@ -136,6 +136,26 @@ class FormulaOneTest {
         assertEquals(42 * Kilometer, track.length())
     }
 
+    @Test
+    @DisplayName("A car cannot be placed in a kilometer greater than the track's length")
+    fun testACarCanNotBePlacedInAKilometerGreaterThanTrackLength() {
+        val track = Track.with(listOf<Sector>(
+            Sector.turboSectorOf(10 * Kilometer),
+            Sector.noTurboSectorOf(2 * Kilometer),
+            Sector.turboSectorOf(30 * Kilometer)
+        ))
+
+        val outside = track.length() + 1 * Millimeter
+        val car = schumacherCar()
+
+        val exception = assertThrows(IllegalStateException::class.java) {
+            track.placeAt(car, outside)
+        }
+
+        assertEquals(Track.carCannotBePlacedOutsideErrorDescription(), exception.message)
+    }
+
+
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
     fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)
 }

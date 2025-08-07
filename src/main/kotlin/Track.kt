@@ -12,7 +12,12 @@ class Track(val sectors: List<Sector>) {
         }
 
         fun noSectorsErrorDescription() = "Track must have sectors"
+        fun carCannotBePlacedOutsideErrorDescription(): String = "Cannot place the car outside the sector"
     }
 
     fun length(): Quantity<Distance> = this.sectors.fold(0 * Kilometer) { acc, sector -> acc + sector.length }
+
+    fun placeAt(car: FormulaOneCar, position: Quantity<Distance>) {
+        check(position <= this.length()) { carCannotBePlacedOutsideErrorDescription() }
+    }
 }
