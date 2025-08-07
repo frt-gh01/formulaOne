@@ -175,6 +175,34 @@ class FormulaOneTest {
         assert(sector3.contains(car))
     }
 
+    @Test
+    @DisplayName("Track should know car is running")
+    fun testTrackShouldKnowCars() {
+        val sector1 = Sector.turboSectorOf(10 * Kilometer)
+        val sector2 = Sector.noTurboSectorOf(2 * Kilometer)
+        val sector3 = Sector.noTurboSectorOf(30 * Kilometer)
+        val track = Track.with(listOf<Sector>(sector1, sector2, sector3))
+
+        val schumacher = schumacherCar()
+        track.placeAt(schumacher, 4 * Kilometer)
+
+        val hamilton = hamiltonCar()
+        track.placeAt(hamilton, 11 * Kilometer)
+
+        val verstappen = verstappenCar()
+        track.placeAt(verstappen, 15 * Kilometer)
+
+        assert(track.contains(schumacher))
+        assert(track.contains(hamilton))
+        assert(track.contains(verstappen))
+
+        assert(sector1.contains(schumacher))
+        assert(sector2.contains(hamilton))
+        assert(sector3.contains(verstappen))
+    }
+
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
     fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)
+    fun verstappenCar(): FormulaOneCar = FormulaOneCar.drivenBy(Verstappen)
+
 }

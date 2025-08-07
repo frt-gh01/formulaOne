@@ -51,6 +51,8 @@ class Track(val sectors: List<Sector>) {
         throw IllegalStateException(carNotFoundErrorDescription())
     }
 
+    fun contains(car: FormulaOneCar): Boolean = this.sectors.any { it.contains(car) }
+
     private fun sectorOfIfNone(car: FormulaOneCar, ifNoneBlock: () -> Unit): Sector {
         val sector = this.sectors.firstOrNull { it.contains(car) }
 
