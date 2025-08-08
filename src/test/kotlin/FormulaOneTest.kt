@@ -443,6 +443,50 @@ class FormulaOneTest {
         assertEquals(105 * (Kilometer/Hour), schumacher.speed())
     }
 
+    @Test
+    @DisplayName("After third Turbo increments speed by 0%")
+    fun testAfterThirdTurboIncrementsSpeedBy0Percent() {
+        val sector1 = Sector.turboSectorOf(10 * Kilometer)
+
+        val schumacher = schumacherCar()
+        schumacher.speed(100 * (Kilometer / Hour))
+
+        val hamilton = hamiltonCar()
+        hamilton.speed(100 * (Kilometer / Hour))
+
+        sector1.placeAt(schumacher, 1 * Kilometer)
+        sector1.placeAt(hamilton, 1 * Kilometer + 49 * Meter)
+
+        // 1st turbo
+        schumacher.activateTurbo()
+
+        // 2nd turbo
+        schumacher.deactivateTurbo()
+        schumacher.activateTurbo()
+
+        // 3rd turbo
+        schumacher.deactivateTurbo()
+        schumacher.activateTurbo()
+
+        // 4th turbo
+        schumacher.deactivateTurbo()
+        schumacher.activateTurbo()
+
+        assertEquals(100 * (Kilometer/Hour), schumacher.speed())
+
+        // 5th turbo
+        schumacher.deactivateTurbo()
+        schumacher.activateTurbo()
+
+        assertEquals(100 * (Kilometer/Hour), schumacher.speed())
+
+        // 6th turbo
+        schumacher.deactivateTurbo()
+        schumacher.activateTurbo()
+
+        assertEquals(100 * (Kilometer/Hour), schumacher.speed())
+    }
+
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
     fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)
     fun verstappenCar(): FormulaOneCar = FormulaOneCar.drivenBy(Verstappen)

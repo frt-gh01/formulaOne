@@ -24,12 +24,18 @@ abstract class TurboStatus(val car: FormulaOneCar) {
 
 class TurboActivated(car: FormulaOneCar, val timesUsed: Int = 0): TurboStatus(car) {
     companion object: TurboStatusCompanion {
-        val ratios=listOf(0.20, 0.10, 0.05)
+        val ratios=listOf(0.20, 0.10, 0.05, 0.0)
 
         override fun on(car: FormulaOneCar): TurboStatus = TurboActivated(car)
     }
 
-    override fun next(): TurboStatus = TurboActivated(this.car, this.timesUsed + 1)
+    override fun next(): TurboStatus {
+        return when (val nextTimeUsed = this.timesUsed + 1) {
+            in 0 until ratios.size -> TurboActivated(this.car, nextTimeUsed)
+            else -> TurboActivated(this.car, ratios.lastIndex)
+        }
+    }
+
     override fun isActivated(): Boolean = true
     override fun speedUp(speed: Speed): Speed = speed + speed * ratios[timesUsed]
 }
