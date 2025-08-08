@@ -14,7 +14,7 @@ class FormulaOneCar(val driver: Driver) {
 
     var turboStatus = TurboDeactivated.on(this)
     var sector: Sector? = null
-    var speed: Speed = 0 * (Kilometer / Hour)
+    private var speed: Speed = 0 * (Kilometer / Hour)
     var traveledDistance: Quantity<Distance> = 0 * Kilometer
 
     fun atSector(sector: Sector) {
@@ -26,7 +26,7 @@ class FormulaOneCar(val driver: Driver) {
     }
 
     fun speed(): Speed {
-        return this.speed
+        return turboStatus.speedUp(this.speed)
     }
 
     fun traveledDistance(): Quantity<Distance> = this.traveledDistance

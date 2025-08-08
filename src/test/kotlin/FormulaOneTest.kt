@@ -380,6 +380,25 @@ class FormulaOneTest {
         assertEquals(sector3, grandPrix.sectorOf(schumacher))
     }
 
+    @Test
+    @DisplayName("First Turbo increments speed by 20%")
+    fun testFirstTurboIncrementsSpeedBy20Percent() {
+        val sector1 = Sector.turboSectorOf(10 * Kilometer)
+
+        val schumacher = schumacherCar()
+        schumacher.speed(100 * (Kilometer / Hour))
+
+        val hamilton = hamiltonCar()
+        hamilton.speed(100 * (Kilometer / Hour))
+
+        sector1.placeAt(schumacher, 1 * Kilometer)
+        sector1.placeAt(hamilton, 1 * Kilometer + 49 * Meter)
+
+        schumacher.activateTurbo()
+
+        assertEquals(120 * (Kilometer/Hour), schumacher.speed())
+    }
+
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
     fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)
     fun verstappenCar(): FormulaOneCar = FormulaOneCar.drivenBy(Verstappen)
