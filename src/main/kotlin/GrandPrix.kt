@@ -1,3 +1,4 @@
+import units.Distance
 import units.Distance.Companion.Kilometer
 import units.Quantity
 import units.Time
@@ -28,5 +29,10 @@ class GrandPrix(val track: Track, val lapsCount: Int, val cars: List<FormulaOneC
         // TODO: implement Unit simplication
         //  Until then, we return Kilometers
         car.travel(distance.amount * Kilometer)
+
+        // TODO: implement Unit `%`
+        //  Until then, we return Kilometers
+        val distanceInTrack = car.traveledDistance().amount % track.length().amount
+        track.placeAt(car, distanceInTrack * Kilometer)
     }
 }

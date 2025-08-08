@@ -355,6 +355,31 @@ class FormulaOneTest {
         assertEquals(sector1, grandPrix.sectorOf(schumacher))
     }
 
+    @Test
+    @DisplayName("GrandPrix moves cars between sectors")
+    fun testGrandPrixMovesCarsBetweenSectors() {
+        val sector1 = Sector.turboSectorOf(10 * Kilometer)
+        val sector2 = Sector.noTurboSectorOf(2 * Kilometer)
+        val sector3 = Sector.noTurboSectorOf(30 * Kilometer)
+        val track = Track.with(listOf<Sector>(sector1, sector2, sector3))
+
+        val lapsCount = 100
+
+        val schumacher = schumacherCar()
+        schumacher.speed(30 * (Kilometer / Hour))
+
+        val grandPrix = GrandPrix.start(
+            track = track,
+            lapsCount = lapsCount,
+            cars = listOf<FormulaOneCar>(schumacher)
+        )
+
+        grandPrix.advanceTime(1 * Hour)
+
+        assertEquals(30 * Kilometer, grandPrix.locationOf(schumacher))
+        assertEquals(sector3, grandPrix.sectorOf(schumacher))
+    }
+
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
     fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)
     fun verstappenCar(): FormulaOneCar = FormulaOneCar.drivenBy(Verstappen)
