@@ -10,6 +10,9 @@ import units.times
 class FormulaOneCar(val driver: Driver) {
     companion object {
         fun drivenBy(driver: Driver) = FormulaOneCar(driver)
+
+        fun turboAlreadyActivatedErrorDescription(): String = "Turbo already activated"
+        fun turboAlreadyDeactivatedErrorDescription(): String = "Turbo already deactivated"
     }
 
     var turboStatus = TurboDeactivated.on(this)
@@ -52,6 +55,14 @@ class FormulaOneCar(val driver: Driver) {
 
     fun deactivateTurboWhenTurboActivated() {
         this.turboStatus = TurboDeactivated(this, this.turboStatus.next() as TurboActivated)
+    }
+
+    fun activeTurboWhenTurboActivated() {
+        throw IllegalStateException(turboAlreadyActivatedErrorDescription())
+    }
+
+    fun deactiveTurboWhenTurboDeactivated() {
+        throw IllegalStateException(turboAlreadyDeactivatedErrorDescription())
     }
 
     /**

@@ -487,6 +487,53 @@ class FormulaOneTest {
         assertEquals(100 * (Kilometer/Hour), schumacher.speed())
     }
 
+    @Test
+    @DisplayName("Cannot activate already activated Turbo")
+    fun testCannotActivateAlreadyActivatedTurbo() {
+        val sector1 = Sector.turboSectorOf(10 * Kilometer)
+
+        val schumacher = schumacherCar()
+        schumacher.speed(100 * (Kilometer / Hour))
+
+        val hamilton = hamiltonCar()
+        hamilton.speed(100 * (Kilometer / Hour))
+
+        sector1.placeAt(schumacher, 1 * Kilometer)
+        sector1.placeAt(hamilton, 1 * Kilometer + 49 * Meter)
+
+        val exception = assertThrows(IllegalStateException::class.java) {
+            schumacher.activateTurbo()
+            schumacher.activateTurbo()
+        }
+
+        assertEquals(FormulaOneCar.turboAlreadyActivatedErrorDescription(), exception.message)
+        assertEquals(120 * (Kilometer/Hour), schumacher.speed())
+    }
+
+    @Test
+    @DisplayName("Cannot deactivate already deactivated Turbo")
+    fun testCannotDeactivateAlreadyDeactivatedTurbo() {
+        val sector1 = Sector.turboSectorOf(10 * Kilometer)
+
+        val schumacher = schumacherCar()
+        schumacher.speed(100 * (Kilometer / Hour))
+
+        val hamilton = hamiltonCar()
+        hamilton.speed(100 * (Kilometer / Hour))
+
+        sector1.placeAt(schumacher, 1 * Kilometer)
+        sector1.placeAt(hamilton, 1 * Kilometer + 49 * Meter)
+
+        val exception = assertThrows(IllegalStateException::class.java) {
+            schumacher.activateTurbo()
+            schumacher.deactivateTurbo()
+            schumacher.deactivateTurbo()
+        }
+
+        assertEquals(FormulaOneCar.turboAlreadyDeactivatedErrorDescription(), exception.message)
+        assertEquals(100 * (Kilometer/Hour), schumacher.speed())
+    }
+
     fun schumacherCar(): FormulaOneCar = FormulaOneCar.drivenBy(Schumacher)
     fun hamiltonCar(): FormulaOneCar = FormulaOneCar.drivenBy(Hamilton)
     fun verstappenCar(): FormulaOneCar = FormulaOneCar.drivenBy(Verstappen)
