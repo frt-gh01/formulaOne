@@ -39,11 +39,19 @@ class FormulaOneCar(val driver: Driver) {
         this.turboStatus.activateTurbo()
     }
 
+    fun deactivateTurbo() {
+        this.turboStatus.deactivateTurbo()
+    }
+
     /**
      * Double dispatch with TurboStatus callbacks
      */
     fun activeTurboWhenTurboDeactivated() {
         this.sector?.carActivatingTurbo(this)
+    }
+
+    fun deactivateTurboWhenTurboActivated() {
+        this.turboStatus = TurboDeactivated(this, this.turboStatus.next() as TurboActivated)
     }
 
     /**

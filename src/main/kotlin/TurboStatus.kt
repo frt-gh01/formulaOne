@@ -13,34 +13,33 @@ abstract class TurboStatus(val car: FormulaOneCar) {
         this.car.activeTurboWhenTurboDeactivated()
     }
 
+    fun deactivateTurbo() {
+        this.car.deactivateTurboWhenTurboActivated()
+    }
+
     abstract fun next(): TurboStatus
     abstract fun isActivated(): Boolean
     abstract fun speedUp(speed: Speed): Speed
 }
 
-class TurboActivated(car: FormulaOneCar): TurboStatus(car) {
+class TurboActivated(car: FormulaOneCar, val timesUsed: Int = 0): TurboStatus(car) {
     companion object: TurboStatusCompanion {
+        val ratios=listOf(0.20, 0.10, 0.05)
+
         override fun on(car: FormulaOneCar): TurboStatus = TurboActivated(car)
     }
 
-    val ratios=listOf(0.20, 0.10, 0.05)
-    var timesUsed = 0
-
-    override fun next(): TurboStatus = this
+    override fun next(): TurboStatus = TurboActivated(this.car, this.timesUsed + 1)
     override fun isActivated(): Boolean = true
-    override fun speedUp(speed: Speed): Speed {
-        val turboSpeed = speed + speed * ratios[timesUsed]
-        timesUsed += 1
-        return turboSpeed
-    }
+    override fun speedUp(speed: Speed): Speed = speed + speed * ratios[timesUsed]
 }
 
-class TurboDeactivated(car: FormulaOneCar): TurboStatus(car) {
+class TurboDeactivated(car: FormulaOneCar, val nextActivatedStatus: TurboActivated): TurboStatus(car) {
     companion object: TurboStatusCompanion {
-        override fun on(car: FormulaOneCar): TurboStatus = TurboDeactivated(car)
+        override fun on(car: FormulaOneCar): TurboStatus = TurboDeactivated(car, TurboActivated(car))
     }
 
-    override fun next(): TurboStatus = TurboActivated(car)
+    override fun next(): TurboStatus = nextActivatedStatus
     override fun isActivated(): Boolean = false
     override fun speedUp(speed: Speed): Speed = speed
 }
