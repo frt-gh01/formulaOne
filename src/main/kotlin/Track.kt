@@ -37,6 +37,10 @@ class Track(val sectors: List<Sector>) {
         // }
     }
 
+    fun placeAtStart(car: FormulaOneCar) {
+        this.sectors.first().placeAt(car, 0 * Kilometer)
+    }
+
     fun sectorOf(car: FormulaOneCar): Sector {
         return sectorOfIfNone(car) { throw IllegalStateException(carNotFoundErrorDescription()) }
     }

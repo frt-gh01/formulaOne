@@ -8,9 +8,15 @@ class GrandPrix(val track: Track, val lapsCount: Int, val cars: List<FormulaOneC
         fun start(track: Track, lapsCount: Int, cars: List<FormulaOneCar>): GrandPrix = GrandPrix(track, lapsCount, cars)
     }
 
+    init {
+        this.cars.forEach { this.track.placeAtStart(it) }
+    }
+
     fun length() = this.track.length() * this.lapsCount
 
     fun locationOf(car: FormulaOneCar) = car.traveledDistance()
+
+    fun sectorOf(car: FormulaOneCar) = this.track.sectorOf(car)
 
     fun advanceTime(timeLapse: Quantity<Time>) {
         this.cars.forEach { this.relocateAfter(it, timeLapse) }
