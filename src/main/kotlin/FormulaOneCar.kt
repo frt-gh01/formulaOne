@@ -31,6 +31,10 @@ class FormulaOneCar(val driver: Driver) {
 
     fun traveledDistance(): Quantity<Distance> = this.traveledDistance
 
+    fun travel(distance: Quantity<Distance>) {
+        this.traveledDistance += distance
+    }
+
     fun activateTurbo() {
         this.turboStatus.activateTurbo()
     }
